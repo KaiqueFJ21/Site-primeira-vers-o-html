@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "client": "webpack serve --mode development --open",
-    "build": "webpack --mode production",
-    "vercel-build": "webpack --mode production",
+    "build": "node node_modules/webpack/bin/webpack.js --mode production",
+    "vercel-build": "node node_modules/webpack/bin/webpack.js --mode production",
     "start": "node server/index.js",
     "server": "node server/index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
