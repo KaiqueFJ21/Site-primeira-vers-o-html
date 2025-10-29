@@ -43,6 +43,7 @@ export default {
   ],
   devServer: {
     historyApiFallback: true,
-    hot: true
+    hot: true,
+    port: 8080
   }
 };
