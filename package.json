@@ -2,7 +2,6 @@
   "name": "meu-projeto",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "client": "webpack serve --mode development --open",
     "build": "webpack --mode production",
