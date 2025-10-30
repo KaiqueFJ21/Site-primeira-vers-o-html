@@ -2,7 +2,7 @@
   "name": "meu-projeto",
   "version": "1.0.0",
   "private": true,
-  "engines": { "node": "18.x" },
+  "engines": { "node": "22.x" },
   "scripts": {
     "client": "webpack serve --mode development --open",
     "build": "node node_modules/webpack/bin/webpack.js --mode production",
@@ -35,4 +35,5 @@
   "overrides": {
     "@babel/traverse": "7.24.7"
   }
+
 }
