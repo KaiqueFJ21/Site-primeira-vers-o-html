@@ -1,112 +1,85 @@
-const db = require('../db');
+import React, { useState } from 'react';
+import '../styles/Contato.css';
 
-module.exports = async (req, res) => {
-    console.log('Iniciando processamento da requisição');
-    
-    // Log do método e corpo da requisição
-    console.log('Método:', req.method);
-    console.log('Corpo da requisição:', req.body);
-    // Habilitar CORS
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', 'https://site-primeira-vers-o-html-6xwm.vercel.app');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-    );
+function Contato() {
+  const [formData, setFormData] = useState({
+    nome: '',
+    email: '',
+    telefone: '',
+    assunto: '',
+    mensagem: ''
+  });
 
-    // Responder a requisições OPTIONS (preflight)
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
-    }
+  const [enviado, setEnviado] = useState(false);
+  const [erro, setErro] = useState('');
+  const [codigoUnico, setCodigoUnico] = useState('');
 
-    if (req.method === 'POST') {
-        try {
-            const { nome, email, telefone, assunto, mensagem } = req.body;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-            // Validação básica
-            if (!nome || !email || !mensagem) {
-                return res.status(400).json({ 
-                    error: 'Nome, email e mensagem são obrigatórios' 
-                });
-            }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErro('');
 
-            // Gerar código único no formato GL-AAMMDD-XXXX (GL = GameLink, AA = ano, MM = mês, DD = dia, XXXX = número aleatório)
-            const dataAtual = new Date();
-            const codigoPartes = {
-                ano: dataAtual.getFullYear().toString().slice(-2),
-                mes: (dataAtual.getMonth() + 1).toString().padStart(2, '0'),
-                dia: dataAtual.getDate().toString().padStart(2, '0'),
-                random: Math.floor(Math.random() * 10000).toString().padStart(4, '0')
-            };
-            const codigoUnico = `GL-${codigoPartes.ano}${codigoPartes.mes}${codigoPartes.dia}-${codigoPartes.random}`;
+    // Mock local: sem servidor
+    const codigo = 'CT-' + Date.now().toString(36).toUpperCase();
+    setCodigoUnico(codigo);
+    setEnviado(true);
+    setFormData({ nome: '', email: '', telefone: '', assunto: '', mensagem: '' });
+  };
 
-            console.log('Preparando para inserir no banco de dados');
-            
-            // Query de inserção
-            const query = `
-                INSERT INTO contatos (
-                    codigo_unico, 
-                    nome, 
-                    email, 
-                    telefone, 
-                    assunto, 
-                    mensagem, 
-                    status, 
-                    status_visualizacao, 
-                    data_criacao
-                ) VALUES (?, ?, ?, ?, ?, ?, 'novo', 'novo', NOW())
-            `;
-            
-            console.log('Query SQL:', query);
+  return (
+    <div className="contato-container">
+      <h1>Entre em Contato</h1>
 
-            console.log('Valores para inserção:', {
-                codigoUnico,
-                nome,
-                email,
-                telefone,
-                assunto,
-                mensagem
-            });
+      {enviado && (
+        <div className="mensagem-sucesso">
+          <div className="sucesso-icone">✓</div>
+          <h2>Mensagem registrada (offline)</h2>
+          <p>Seu código de protocolo é:</p>
+          <div className="codigo-container">
+            <span className="codigo-unico">{codigoUnico}</span>
+          </div>
+          <p className="codigo-instrucao">📋 Guarde este código. Não há envio ao servidor.</p>
+        </div>
+      )}
 
-            try {
-                const [result] = await db.execute(query, [
-                    codigoUnico,
-                    nome,
-                    email,
-                    telefone || null,
-                    assunto || 'Contato via site',
-                    mensagem
-                ]);
-                
-                console.log('Inserção realizada com sucesso:', result);
-            } catch (dbError) {
-                console.error('Erro na inserção:', dbError);
-                throw new Error(`Erro na inserção no banco: ${dbError.message}`);
-            }
-            
-            // Registrar no log
-            await db.execute(
-                'INSERT INTO log_contatos (contato_id, acao) VALUES (?, ?)',
-                [result.insertId, 'Novo contato criado']
-            );
+      {erro && <div className="mensagem-erro">{erro}</div>}
 
-            return res.status(201).json({
-                success: true,
-                id: result.insertId,
-                codigo: codigoUnico,
-                message: 'Mensagem enviada com sucesso! Seu código de acompanhamento é: ' + codigoUnico
-            });
+      {!enviado && (
+        <form onSubmit={handleSubmit} className="contato-form">
+          <div className="form-group">
+            <label htmlFor="nome">Nome:</label>
+            <input id="nome" name="nome" value={formData.nome} onChange={handleChange} required />
+          </div>
 
-        } catch (error) {
-            console.error('Erro ao salvar contato:', error);
-            return res.status(500).json({ 
-                error: 'Erro interno ao processar sua solicitação' 
-            });
-        }
-    }
+          <div className="form-group">
+            <label htmlFor="email">Email:</label>
+            <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
+          </div>
 
-    // Se não for POST ou OPTIONS
-    return res.status(405).json({ error: 'Método não permitido' });
-};
+          <div className="form-group">
+            <label htmlFor="telefone">Telefone:</label>
+            <input id="telefone" name="telefone" value={formData.telefone} onChange={handleChange} />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="assunto">Assunto:</label>
+            <input id="assunto" name="assunto" value={formData.assunto} onChange={handleChange} required />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="mensagem">Mensagem:</label>
+            <textarea id="mensagem" name="mensagem" rows="5" value={formData.mensagem} onChange={handleChange} required />
+          </div>
+
+          <button type="submit" className="btn-enviar">Enviar</button>
+        </form>
+      )}
+    </div>
+  );
+}
+
+export default Contato;
