@@ -23,7 +23,7 @@ const authenticateToken = async (req, res) => {
 module.exports = async (req, res) => {
     // Habilitar CORS
     res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', 'https://site-primeira-vers-o-html-6xwm.vercel.app');
+    res.setHeader('Access-Control-Allow-Origin', 'https://site-primeira-vers-o-html.vercel.app');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS');
     res.setHeader(
         'Access-Control-Allow-Headers',
