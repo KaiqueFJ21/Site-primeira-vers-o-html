@@ -6,8 +6,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/',
-    clean: true
+    publicPath: '/'
   },
   module: {
     rules: [
@@ -16,22 +15,13 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          options: { presets: ['@babel/preset-react'] }
+          options: { presets: ['@babel/preset-react'] } // remove preset-env
         }
       },
       { test: /\.css$/, use: ['style-loader', 'css-loader'] }
     ]
   },
   resolve: { extensions: ['.js', '.jsx', '.json'] },
-  plugins: [
-    new HtmlWebpackPlugin({ 
-      template: './public/index.html',
-      inject: 'body'
-    })
-  ],
-  devtool: 'source-map',
-  devServer: { 
-    historyApiFallback: true,
-    port: 3000
-  }
+  plugins: [new HtmlWebpackPlugin({ template: './public/index.html' })],
+  devServer: { historyApiFallback: true }
 };
