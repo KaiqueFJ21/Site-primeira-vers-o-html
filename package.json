@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "webpack serve --config webpack.config.js",
-    "build": "webpack --mode production",
-    "vercel-build": "webpack --mode production"
+    "build": "node node_modules/webpack/bin/webpack.js --mode production",
+    "vercel-build": "node node_modules/webpack/bin/webpack.js --mode production"
   },
   "dependencies": {
     "react": "^18.2.0",
