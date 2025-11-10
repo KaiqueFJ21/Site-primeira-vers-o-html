@@ -1,30 +1,31 @@
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
-export default function Navbar(){
-  const nav = [
-    { to: "/", label: "Home" },
-    { to: "/sobre", label: "Sobre" },
-    { to: "/projetos", label: "Projetos" },
-    { to: "/planos", label: "Planos" },
-    { to: "/contato", label: "Contato" },
-  ];
+function Navbar() {
+  const { pathname } = useLocation();
+  const isActive = (p) => pathname === p;
+
   return (
-    <header className="navbar">
+    <nav className="navbar">
       <div className="container inner">
-        <Link className="brand" to="/">
-          <span className="logo" aria-hidden="true" />
-          <span>Game Link</span>
+        <Link to="/" className="brand">
+          <div className="logo"></div>
+          <span>GameLink</span>
         </Link>
-        <nav className="navlinks">
-          {nav.map((n) => (
-            <NavLink key={n.to} to={n.to} end style={({isActive})=>({opacity:isActive?1:.8})}>
-              {n.label}
-            </NavLink>
-          ))}
-        </nav>
-        <a href="#planos" className="cta-btn">Experimentar</a>
+
+        <div className="navlinks">
+          <Link className={isActive('/') ? 'active' : ''} to="/">Home</Link>
+          <Link className={isActive('/sobre') ? 'active' : ''} to="/sobre">Sobre</Link>
+          <Link className={isActive('/servicos') ? 'active' : ''} to="/servicos">Serviços</Link>
+          <Link className={isActive('/planos') ? 'active' : ''} to="/planos">Planos</Link>
+          <Link className={isActive('/projetos') ? 'active' : ''} to="/projetos">Projetos</Link>
+          <Link className={isActive('/contato') ? 'active' : ''} to="/contato">Contato</Link>
+        </div>
+
+        <Link to="/login" className="cta-btn">Login</Link>
       </div>
-    </header>
+    </nav>
   );
 }
+
+export default Navbar;

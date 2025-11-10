@@ -4,9 +4,9 @@
   "private": true,
   "engines": { "node": "22.x" },
   "scripts": {
-    "dev": "webpack serve --mode development --open",
-    "build": "node node_modules/webpack/bin/webpack.js --mode production",
-    "vercel-build": "node node_modules/webpack/bin/webpack.js --mode production"
+    "dev": "webpack serve --config webpack.config.js",
+    "build": "webpack --mode production",
+    "vercel-build": "webpack --mode production"
   },
   "dependencies": {
     "react": "^18.3.1",
