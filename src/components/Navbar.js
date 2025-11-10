@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 function Navbar() {
   const { pathname } = useLocation();
-  const isActive = (p) => pathname === p;
+  const active = (p) => pathname === p ? { opacity: 1, fontWeight: 700 } : {};
 
   return (
     <nav className="navbar">
@@ -12,16 +12,14 @@ function Navbar() {
           <div className="logo"></div>
           <span>GameLink</span>
         </Link>
-
         <div className="navlinks">
-          <Link className={isActive('/') ? 'active' : ''} to="/">Home</Link>
-          <Link className={isActive('/sobre') ? 'active' : ''} to="/sobre">Sobre</Link>
-          <Link className={isActive('/servicos') ? 'active' : ''} to="/servicos">Serviços</Link>
-          <Link className={isActive('/planos') ? 'active' : ''} to="/planos">Planos</Link>
-          <Link className={isActive('/projetos') ? 'active' : ''} to="/projetos">Projetos</Link>
-          <Link className={isActive('/contato') ? 'active' : ''} to="/contato">Contato</Link>
+          <Link style={active('/')} to="/">Home</Link>
+          <Link style={active('/sobre')} to="/sobre">Sobre</Link>
+          <Link style={active('/servicos')} to="/servicos">Serviços</Link>
+          <Link style={active('/planos')} to="/planos">Planos</Link>
+          <Link style={active('/projetos')} to="/projetos">Projetos</Link>
+          <Link style={active('/contato')} to="/contato">Contato</Link>
         </div>
-
         <Link to="/login" className="cta-btn">Login</Link>
       </div>
     </nav>

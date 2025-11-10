@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import './styles/global.css';
 
 function App() {
+  console.log('App montado, rota atual:', window.location.pathname);
   return (
     <Router>
       <div className="app">
