@@ -1,5 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://site-primeira-vers-o-html-6xwm.vercel.app/api';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App';
 
-export const config = {
-    apiUrl: API_URL
-};
+createRoot(document.getElementById('root')).render(<App />);
