@@ -1,72 +1,50 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Login.css';
 
-export default function Login() {
-    const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
-    const [erro, setErro] = useState('');
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+function Login() {
+  const [error, setError] = useState(null);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setErro('');
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError(null);
+    const data = Object.fromEntries(new FormData(e.currentTarget).entries());
+    try {
+      // TODO: chame sua API de autenticação aqui
+      console.log('login:', data);
+      // await api.login(data)
+    } catch (err) {
+      setError('Erro ao conectar com o servidor');
+    }
+  }
 
-        try {
-            const response = await fetch('api/admin/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, senha }),
-            });
+  return (
+    <div className="container">
+      <section className="section auth">
+        <div className="card" style={{ padding: 22, width: 'min(520px, 92vw)', margin: '0 auto' }}>
+          <h2 className="center" style={{ margin: 0 }}>
+            <span className="gradient-text">Área Administrativa</span>
+          </h2>
 
-            const data = await response.json();
-
-            if (response.ok) {
-                localStorage.setItem('adminToken', data.token);
-                navigate('/admin/dashboard');
-            } else {
-                setErro(data.message || 'Erro ao fazer login');
-            }
-        } catch (error) {
-            setErro('Erro ao conectar com o servidor');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <div className="login-container">
-            <div className="login-card">
-                <h2>Área Administrativa</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Senha</label>
-                        <input
-                            type="password"
-                            value={senha}
-                            onChange={(e) => setSenha(e.target.value)}
-                            required
-                        />
-                    </div>
-                    {erro && <div className="erro-mensagem">{erro}</div>}
-                    <button type="submit" disabled={loading}>
-                        {loading ? 'Entrando...' : 'Entrar'}
-                    </button>
-                </form>
+          <form className="form" onSubmit={handleSubmit} style={{ marginTop: 18 }} noValidate>
+            <div className="field">
+              <label htmlFor="email">Email</label>
+              <input id="email" name="email" type="email" required placeholder="voce@exemplo.com" />
             </div>
+
+            <div className="field">
+              <label htmlFor="senha">Senha</label>
+              <input id="senha" name="senha" type="password" required placeholder="••••••••" />
+            </div>
+
+            {error && <div className="alert alert-error">{error}</div>}
+
+            <button type="submit" className="cta-btn" style={{ width: '100%', marginTop: 10 }}>
+              Entrar
+            </button>
+          </form>
         </div>
-    );
+      </section>
+    </div>
+  );
 }
+
+export default Login;
