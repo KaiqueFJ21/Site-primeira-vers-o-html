@@ -248,3 +248,82 @@ hr.sep{
   border-color: rgba(90,215,255,.45);
   box-shadow: 0 0 0 3px rgba(90,215,255,.12);
 }
+
+.navbar{ position:relative; z-index:80; }
+.navbar .nav-toggle{
+  display:none;
+  background:transparent;border:0;width:44px;height:44px;align-items:center;justify-content:center;
+}
+.navbar .nav-toggle span{
+  display:block;height:3px;background:rgba(255,255,255,.85);margin:4px 8px;border-radius:2px;transition:all .18s;
+}
+.navbar .navlinks{ display:flex; gap:18px; align-items:center; }
+
+/* Mobile menu: hidden por padrão, aparece com .show */
+@media (max-width: 880px){
+  .navbar .nav-toggle{ display:flex; }
+  .navbar .navlinks{
+    display:none;
+    position: absolute;
+    top: 64px;
+    right: 12px;
+    left: 12px;
+    background: rgba(10,6,12,.55);
+    backdrop-filter: blur(8px);
+    border-radius:12px;
+    padding:12px;
+    flex-direction:column;
+    gap:8px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.6);
+    z-index:90;
+    max-height: calc(100vh - 120px);
+    overflow:auto;
+  }
+  .navbar .navlinks.show{ display:flex; }
+  .navbar .navlinks a{ padding:10px 12px; border-radius:8px; }
+
+  /* evita que o menu cubra totalmente o conteúdo */
+  .container.inner{ position:relative; }
+
+  /* HERO / SECTIONS */
+  .section{ padding: 38px 16px; }
+  h1{ font-size: clamp(22px, 6vw, 44px); }
+  .muted{ font-size: clamp(12px, 3.4vw, 15px); }
+
+  /* LAY-OUT: empilha colunas */
+  .split{ display:grid; grid-template-columns: 1fr; gap:18px; }
+  .card{ padding:16px; border-radius:12px; }
+
+  /* GRID genérico (serviços) */
+  .services-grid{ display:grid; grid-template-columns: 1fr; gap:18px; }
+
+  /* reduz decorativos */
+  .bg-decor .blob, .bg-decor .rings{ transform: scale(.75); opacity:.95; }
+}
+
+/* RESPONSIVE IMAGES + CARDS (mantém proporção) */
+.card img, .card .media, .hero-media img {
+  width:100%;
+  height:auto;
+  object-fit:cover;
+  border-radius:10px;
+  display:block;
+}
+
+/* cards com layout vertical e conteúdo fluido */
+.card{ display:flex; flex-direction:column; gap:12px; align-items:stretch; }
+
+/* mínimo para cards em desktop — evita caixas desproporcionais */
+@media (min-width: 881px){
+  .card{ min-height: 160px; }
+  .services-grid{ grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+}
+
+/* utility: garantir que links do header fiquem legíveis */
+.navbar .navlinks a{ color:var(--text); text-decoration:none; }
+
+/* Ajustes adicionais para muito pequeno */
+@media (max-width: 420px){
+  .container{ padding-left:14px; padding-right:14px; }
+  .cta-btn{ padding:10px 12px; font-size:14px; }
+}
