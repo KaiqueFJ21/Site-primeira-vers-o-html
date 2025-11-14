@@ -7,15 +7,35 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/'
+    publicPath: '/',
+    clean: true
   },
   module: {
     rules: [
-      { test: /\.(js|jsx)$/, exclude: /node_modules/, use: { loader: 'babel-loader', options: { presets: ['@babel/preset-react'] } } },
-      { test: /\.css$/, use: ['style-loader', 'css-loader'] }
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader'
+        }
+      },
+      { 
+        test: /\.css$/, 
+        use: ['style-loader', 'css-loader'] 
+      }
     ]
   },
-  resolve: { extensions: ['.js', '.jsx'] },
-  plugins: [ new HtmlWebpackPlugin({ template: './public/index.html' }) ],
-  devServer: { historyApiFallback: true, port: 8080 }
+  resolve: { 
+    extensions: ['.js', '.jsx'] 
+  },
+  plugins: [
+    new HtmlWebpackPlugin({ 
+      template: './public/index.html'
+    })
+  ],
+  devServer: { 
+    historyApiFallback: true,
+    port: 8080,
+    hot: true
+  }
 };
