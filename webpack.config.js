@@ -22,7 +22,7 @@ export default {
     proxy: [
       {
         context: ["/api"],
-        target: "https://site-primeira-vers-o-html-6xwm.vercel.app",
+        target: "https://site-primeira-vers-o-html.vercel.app",
         changeOrigin: true,
         secure: true
       }
@@ -31,8 +31,17 @@ export default {
   module: {
     rules: [
       {
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false
+        }
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
+        resolve: {
+          fullySpecified: false
+        },
         use: {
           loader: "babel-loader",
           options: {

@@ -19,8 +19,8 @@ export default function Contato(){
 
     setStatus("enviando");
     try {
-      // URL da API
-      const API_URL = 'https://site-primeira-vers-o-html-6xwm.vercel.app/api';
+      // URL da API (usar `config` para facilitar deploys)
+      const API_URL = config?.apiUrl || 'https://site-primeira-vers-o-html.vercel.app/api';
       console.log('Enviando dados para:', `${API_URL}/contato`);
       console.log('Dados:', data);
       
