@@ -327,3 +327,69 @@ hr.sep{
   .container{ padding-left:14px; padding-right:14px; }
   .cta-btn{ padding:10px 12px; font-size:14px; }
 }
+/* === Visibilidade da marca no header === */
+/* força cor clara no texto da marca */
+.navbar .brand,
+.navbar .brand a {
+  color: #EEF2FF !important;          /* claro o suficiente no roxo escuro */
+  font-weight: 800;
+  text-decoration: none;
+  text-shadow: 0 1px 8px rgba(0,0,0,.35); /* leve glow p/ contraste */
+}
+
+.navbar .brand a:hover,
+.navbar .brand a:focus {
+  color: #FFFFFF !important;
+}
+
+/* se o nome da marca estiver com .gradient-text (que pode escurecer),
+   neutralize só no header para manter a leitura */
+.navbar .brand .gradient-text {
+  background: none !important;
+  -webkit-text-fill-color: #EEF2FF !important;
+  color: #EEF2FF !important;
+}
+/* RIGHT media mais estreita na seção "split" da Home */
+.card.media.right-narrow {
+  width: 100%;
+  max-width: 380px;      /* limita a largura */
+  aspect-ratio: 9 / 16;  /* mantém a proporção vertical */
+  justify-self: end;     /* NÃO estica na coluna da grid */
+  align-self: start;     /* alinha ao topo da linha */
+  overflow: hidden;
+  min-height: 0;         /* neutraliza min-height genérico dos cards */
+}
+
+.card.media.right-narrow img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Mantém a 3ª imagem vertical, sem esticar, e sem bordas brancas visíveis */
+.card.media.right-narrow {
+  width: 100%;
+  max-width: 380px;
+  aspect-ratio: 9 / 16;
+  justify-self: end;     /* evita esticar na coluna da grid */
+  align-self: start;
+  overflow: hidden;
+  position: relative;    /* para a overlay */
+  min-height: 0;
+}
+.card.media.right-narrow img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     /* cobre totalmente a área, corta sobras claras */
+  display: block;
+}
+
+/* Overlay suave para harmonizar com a paleta roxo/azul do site */
+.card.media.right-narrow .overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 60% at 70% 30%, rgba(120,71,255,.22), transparent 60%),
+    linear-gradient(180deg, rgba(255,60,172,.12), rgba(90,215,255,.10));
+}
