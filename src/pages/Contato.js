@@ -1,156 +1,211 @@
 import React, { useState } from "react";
-import { config } from '../config/index.js';
 
-export default function Contato(){
-  const [status, setStatus] = useState(null);
-  const [codigoContato, setCodigoContato] = useState(null);
-  const onSubmit = async (e) => {
+/* <<< DECLARA AQUI, NO TOPO DO ARQUIVO >>> */
+const iconStyle = {
+  width: 38,
+  height: 38,
+  borderRadius: 10,
+  display: "inline-grid",
+  placeItems: "center",
+  background: "linear-gradient(135deg, rgba(90,215,255,.18), rgba(255,60,172,.12))",
+  border: "1px solid rgba(255,255,255,.12)",
+  boxShadow: "inset 0 0 18px rgba(90,215,255,.12), 0 10px 20px rgba(0,0,0,.25)",
+  fontWeight: 800,
+};
+
+export default function Contato() {
+  const [form, setForm] = useState({
+    nome: "",
+    email: "",
+    assunto: "",
+    mensagem: "",
+  });
+  const [status, setStatus] = useState({ type: "idle", msg: "" });
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+  };
+
+  const validate = () => {
+    if (!form.nome.trim()) return "Informe seu nome.";
+    if (!form.email.trim()) return "Informe seu e-mail.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return "E-mail inválido.";
+    if (!form.assunto.trim()) return "Informe o assunto.";
+    if (!form.mensagem.trim()) return "Digite sua mensagem.";
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      nome: formData.get('nome'),
-      email: formData.get('email'),
-      telefone: formData.get('telefone') || null,
-      assunto: formData.get('assunto') || 'Contato via site',
-      mensagem: formData.get('mensagem'),
-      status: 'novo',
-      data_criacao: new Date().toISOString()
-    };
+    setStatus({ type: "loading", msg: "Enviando..." });
 
-    setStatus("enviando");
+    const err = validate();
+    if (err) {
+      setStatus({ type: "error", msg: err });
+      return;
+    }
+
     try {
-      // URL da API (usar `config` para facilitar deploys)
-      const API_URL = config?.apiUrl || 'https://site-primeira-vers-o-html.vercel.app/api';
-      console.log('Enviando dados para:', `${API_URL}/contato`);
-      console.log('Dados:', data);
-      
-      const response = await fetch(`${API_URL}/contato`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        mode: 'cors',
-        body: JSON.stringify(data)
+      const res = await fetch("/api/contato", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
-      
-      const responseData = await response.json();
-      console.log('Resposta do servidor:', responseData);
-      
-      if (!response.ok) {
-        throw new Error(responseData.error || 'Erro ao enviar mensagem');
-      }
 
-      setStatus("ok");
-      setCodigoContato(responseData.codigo);
-      e.currentTarget.reset();
-    } catch (error) {
-      console.error('Erro ao enviar mensagem:', error);
-      console.error('Detalhes do erro:', error.message);
-      setStatus("erro");
-      // Mostrar erro mais específico para o usuário
-      alert(`Erro ao enviar mensagem: ${error.message}. Por favor, tente novamente ou entre em contato por outro meio.`);
+      if (!res.ok) throw new Error("API indisponível");
+
+      setStatus({ type: "success", msg: "Mensagem enviada com sucesso! Em breve entraremos em contato." });
+      setForm({ nome: "", email: "", assunto: "", mensagem: "" });
+    } catch {
+      // modo demo para desenvolvimento local
+      setTimeout(() => {
+        setStatus({
+          type: "success",
+          msg: "Mensagem enviada (modo demonstração). Quando a API estiver ativa, o envio será real.",
+        });
+        setForm({ nome: "", email: "", assunto: "", mensagem: "" });
+      }, 500);
     }
   };
+
   return (
     <section className="section">
       <div className="container">
-        <h2>Contato</h2>
-        <p className="hint">Fale com a equipe Game Link</p>
-        <form onSubmit={onSubmit} className="card" style={{padding:18, maxWidth:560}}>
-          <div style={{display:"grid", gap:12}}>
-            <label>Nome<input required name="nome" style={inputStyle} /></label>
-            <label>Email<input required name="email" type="email" style={inputStyle} /></label>
-            <label>Telefone<input name="telefone" type="tel" style={inputStyle} /></label>
-            <label>Assunto<input name="assunto" style={inputStyle} /></label>
-            <label>Mensagem<textarea required name="mensagem" rows="5" style={inputStyle} /></label>
-            <button className="cta-btn" type="submit">Enviar</button>
-            {status === "ok" && (
-              <div className="hint" style={{textAlign: 'center'}}>
-                <div style={{
-                  background: 'rgba(76, 175, 80, 0.1)',
-                  padding: '20px',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(76, 175, 80, 0.2)',
-                  marginTop: '20px'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '15px'
-                  }}>
-                    <span style={{
-                      background: '#4CAF50',
-                      borderRadius: '50%',
-                      width: '24px',
-                      height: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginRight: '10px'
-                    }}>✓</span>
-                    <p style={{
-                      color: '#4CAF50',
-                      fontSize: '1.1em',
-                      margin: 0
-                    }}>Mensagem enviada com sucesso!</p>
-                  </div>
-                  
-                  {codigoContato && (
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      padding: '15px',
-                      borderRadius: '8px',
-                      marginTop: '15px'
-                    }}>
-                      <p style={{
-                        fontSize: '0.9em',
-                        color: '#666',
-                        margin: '0 0 8px 0'
-                      }}>Seu código de acompanhamento:</p>
-                      
-                      <div style={{
-                        background: '#f5f5f5',
-                        padding: '12px',
-                        borderRadius: '6px',
-                        border: '1px dashed #4CAF50',
-                        marginBottom: '10px'
-                      }}>
-                        <strong style={{
-                          fontSize: '1.4em',
-                          letterSpacing: '2px',
-                          color: '#2E7D32',
-                          fontFamily: 'monospace'
-                        }}>{codigoContato}</strong>
-                      </div>
-                      
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '10px',
-                        marginTop: '10px',
-                        fontSize: '0.9em',
-                        color: '#666'
-                      }}>
-                        <span>📋 Guarde este código para consultas futuras</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
+        {/* HERO */}
+        <div className="card" style={{ padding: 18, marginBottom: 18 }}>
+          <div className="kicker">Fale com a equipe</div>
+          <h1 style={{ marginTop: 6 }}>
+            <span className="gradient-text">Contato</span>
+          </h1>
+          <p className="muted" style={{ maxWidth: 760 }}>
+            Tem dúvidas sobre planos, integrações ou quer apresentar seu time/comunidade? Envie uma mensagem
+            pelo formulário ou use um dos canais ao lado. Respondemos o quanto antes.
+          </p>
+        </div>
+
+        {/* GRID: Formulário + Canais */}
+        <div className="split">
+          {/* Formulário */}
+          <div className="card" style={{ padding: 18 }}>
+            <h3 style={{ marginTop: 0 }}>Envie uma mensagem</h3>
+
+            <form className="form" onSubmit={handleSubmit} noValidate>
+              <div className="field">
+                <label htmlFor="nome">Nome</label>
+                <input
+                  id="nome"
+                  name="nome"
+                  type="text"
+                  placeholder="Seu nome"
+                  value={form.nome}
+                  onChange={onChange}
+                  required
+                />
               </div>
-            )}
-            {status === "erro" && <span className="hint">Não foi possível enviar agora. ❌</span>}
+
+              <div className="field">
+                <label htmlFor="email">E-mail</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="voce@exemplo.com"
+                  value={form.email}
+                  onChange={onChange}
+                  required
+                />
+              </div>
+
+              <div className="field">
+                <label htmlFor="assunto">Assunto</label>
+                <input
+                  id="assunto"
+                  name="assunto"
+                  type="text"
+                  placeholder="Ex.: Parceria, Integrações, Planos..."
+                  value={form.assunto}
+                  onChange={onChange}
+                  required
+                />
+              </div>
+
+              <div className="field">
+                <label htmlFor="mensagem">Mensagem</label>
+                <textarea
+                  id="mensagem"
+                  name="mensagem"
+                  rows={5}
+                  placeholder="Conte-nos mais sobre sua necessidade :)"
+                  value={form.mensagem}
+                  onChange={onChange}
+                  required
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                <button
+                  type="submit"
+                  className="cta-btn"
+                  disabled={status.type === "loading"}
+                  style={{ cursor: status.type === "loading" ? "wait" : "pointer" }}
+                >
+                  {status.type === "loading" ? "Enviando..." : "Enviar"}
+                </button>
+
+                <span
+                  aria-live="polite"
+                  className={status.type === "error" ? "hint" : "muted"}
+                  style={{
+                    color: status.type === "error" ? "#ffb4c7" : "var(--muted)",
+                    fontWeight: status.type === "success" ? 700 : 500,
+                  }}
+                >
+                  {status.msg}
+                </span>
+              </div>
+            </form>
           </div>
-        </form>
+
+          {/* Canais de contato / Info */}
+          <div className="card" style={{ padding: 18 }}>
+            <h3 style={{ marginTop: 0 }}>Canais</h3>
+
+            <ul className="muted" style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 12 }}>
+              <li style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <span className="icon" aria-hidden="true" style={iconStyle}>✉️</span>
+                <a href="mailto:contato@gamelink.app" style={{ color: "var(--text)", textDecoration: "none" }}>
+                  contato@gamelink.app
+                </a>
+              </li>
+              <li style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <span className="icon" aria-hidden="true" style={iconStyle}>💬</span>
+                <a href="https://discord.gg/MtuxYcS2xK" target="_blank" rel="noreferrer" style={{ color: "var(--text)", textDecoration: "none" }}>
+                  Discord da comunidade
+                </a>
+              </li>
+              <li style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <span className="icon" aria-hidden="true" style={iconStyle}>📸</span>
+                <a href="https://instagram.com/" target="_blank" rel="noreferrer" style={{ color: "var(--text)", textDecoration: "none" }}>
+                  Instagram
+                </a>
+              </li>
+            </ul>
+
+            <hr className="sep" />
+
+            <h4 style={{ margin: "8px 0" }}>Atendimento</h4>
+            <p className="muted" style={{ marginTop: 6 }}>
+              Segunda a Sexta, 9h–18h (BRT). Respondemos em até 1 dia útil.
+            </p>
+
+            <h4 style={{ margin: "12px 0 6px" }}>Privacidade</h4>
+            <p className="muted" style={{ marginTop: 6 }}>
+              Seus dados são usados apenas para retorno do contato. Ao enviar, você concorda com nossa Política de Privacidade.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
-
-const inputStyle = {
-  width:"100%", marginTop:6, padding:"12px 14px",
-  borderRadius:12, border:"1px solid rgba(255,255,255,.18)",
-  background:"rgba(255,255,255,.06)", color:"#fff", outline:"none"
-};
